@@ -10,7 +10,7 @@
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
         <!-- the schema is the same as Assignment 3, except for new tables for Security ... see Scripts folder "bloodbank-create-security.sql" -->
-        <property name="javax.persistence.schema-generation.database.action" value="none"/>
+        <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
         <property name="javax.persistence.schema-generation.create-source" value="script" />
         <property name="javax.persistence.schema-generation.create-script-source" value="META-INF/sql/bloodbank-create.sql" />
         <property name="javax.persistence.schema-generation.drop-source" value="script" />

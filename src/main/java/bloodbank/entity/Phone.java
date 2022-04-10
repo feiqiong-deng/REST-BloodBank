@@ -25,6 +25,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @SuppressWarnings("unused")
@@ -55,7 +56,7 @@ public class Phone extends PojoBase implements Serializable {
 
     @OneToMany(cascade=CascadeType.MERGE, fetch = FetchType.LAZY)
     @JoinColumn( name = "phone_id", referencedColumnName = "phone_id", insertable = false, updatable = false)
-    @JsonBackReference
+    @JsonIgnore
     private Set< Contact> contacts = new HashSet<>();
 
     public Phone() {

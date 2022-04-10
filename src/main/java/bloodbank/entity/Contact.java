@@ -50,12 +50,10 @@ public class Contact extends PojoBaseCompositeKey< ContactPK> implements Seriali
     @MapsId( "phoneId")
     @ManyToOne( cascade = CascadeType.ALL, optional = false, fetch = FetchType.LAZY)
     @JoinColumn( name = "phone_id", referencedColumnName = "phone_id", nullable = false)
-    @JsonManagedReference
     private Phone phone;
 
     @ManyToOne( cascade = CascadeType.ALL, optional = true, fetch = FetchType.LAZY)
     @JoinColumn( name = "address_id", referencedColumnName = "address_id", nullable = true)
-    @JsonManagedReference
     private Address address;
 
     @Column( length = 100, name = "email")

@@ -48,6 +48,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import bloodbank.entity.Address;
 import bloodbank.entity.Person;
 
 @SuppressWarnings("unused")
@@ -100,4 +101,5 @@ public class TestBloodBankSystem {
         assertThat(persons, is(not(empty())));
         assertThat(persons, hasSize(1));
     }
+    
 }

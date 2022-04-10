@@ -42,7 +42,6 @@ public class DonationRecord extends PojoBase implements Serializable {
 
     @OneToOne(cascade=CascadeType.ALL, orphanRemoval=true)
     @JoinColumn( name = "donation_id", referencedColumnName = "donation_id")
-    @JsonManagedReference
     private BloodDonation donation;
 
     @ManyToOne(cascade=CascadeType.MERGE,fetch = FetchType.LAZY)

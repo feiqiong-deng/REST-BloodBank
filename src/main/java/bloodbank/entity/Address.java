@@ -25,6 +25,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @SuppressWarnings("unused")
 
@@ -88,7 +89,7 @@ public class Address extends PojoBase implements Serializable {
     @JoinColumn( name = "address_id", referencedColumnName = "address_id", insertable = false, updatable = false)
     // Hint - java.util.Set is used as a collection, however List could have been used as well.
     // Hint - java.util.Set will be unique and also possibly can provide better get performance with HashCode.
-    @JsonBackReference
+    @JsonIgnore
     private Set< Contact> contacts = new HashSet<>();
 
     public Address() {

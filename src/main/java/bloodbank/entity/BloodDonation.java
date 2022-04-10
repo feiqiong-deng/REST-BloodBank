@@ -25,6 +25,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @SuppressWarnings("unused")
 
@@ -50,7 +51,7 @@ public class BloodDonation extends PojoBase implements Serializable {
 	@OneToOne(cascade=CascadeType.MERGE, fetch = FetchType.LAZY, optional = true)
     // if not using mappedBy, need @JoinColumn
 	@JoinColumn( name = "donation_id", referencedColumnName = "donation_id", nullable = true, insertable = false, updatable = false)
-	@JsonBackReference
+	@JsonIgnore
     private DonationRecord record;
 
     @Basic( optional = false)
