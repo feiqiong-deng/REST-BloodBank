@@ -58,7 +58,7 @@ public class TestAddress {
     static HttpAuthenticationFeature adminAuth;
     static HttpAuthenticationFeature userAuth;
     
-    private final String ID = "1";
+    private final int ID = 1;
     private static Address addressSample;
 	private static final String STREETNUM = "123";
 	private static final String ST = "cde ln";
@@ -95,9 +95,8 @@ public class TestAddress {
     
     @Test
 	@Order(1)
-    public void test_all_addresses_with_adminrole() throws JsonMappingException, JsonProcessingException {
+    public void test01_all_addresses_with_adminrole() throws JsonMappingException, JsonProcessingException {
         Response response = webTarget
-            //.register(userAuth)
             .register(adminAuth)
             .path(CUSTOMER_ADDRESS_SUBRESOURCE_NAME)
             .request()
@@ -105,14 +104,13 @@ public class TestAddress {
         assertThat(response.getStatus(), is(200));
         List<Address> addresses = response.readEntity(new GenericType<List<Address>>(){});
         assertThat(addresses, is(not(empty())));
-//        assertThat(addresses, hasSize(1));
+        assertThat(addresses, hasSize(1));
     }
     
     @Test
 	@Order(2)
-    public void test_addressById_with_adminrole() throws JsonMappingException, JsonProcessingException {
+    public void test02_addressById_with_adminrole() throws JsonMappingException, JsonProcessingException {
         Response response = webTarget
-            //.register(userAuth)
             .register(adminAuth)
             .path(CUSTOMER_ADDRESS_SUBRESOURCE_NAME + "/" + ID)
             .request()
@@ -120,12 +118,27 @@ public class TestAddress {
         assertThat(response.getStatus(), is(200));
         Address address = response.readEntity(new GenericType<Address>(){});
         assertThat(address, notNullValue());
-      
+        assertThat(address.getId(), equalTo(ID));
+    }
+    
+    @Test
+	@Order(3)
+    public void test03_addressById_with_userRole() throws JsonMappingException, JsonProcessingException {
+        Response response = webTarget
+            .register(userAuth)
+            .path(CUSTOMER_ADDRESS_SUBRESOURCE_NAME + "/" + ID)
+            .request()
+            .get();
+        
+        assertThat(response.getStatus(), is(200));
+        Address address = response.readEntity(new GenericType<Address>(){});
+        assertThat(address, notNullValue());
+        assertThat(address.getId(), equalTo(ID));
     }
     
    @Test
-   @Order(3)
-   public void test_addAddress_with_adminrole() {
+   @Order(4)
+   public void test04_addAddress_with_adminrole() throws JsonMappingException, JsonProcessingException {
    		Entity<Address> add = Entity.json(addressSample);
    	
    		Response response = webTarget
@@ -146,10 +159,27 @@ public class TestAddress {
         assertThat(address.getCountry(), equalTo(COUNTRY));
         assertThat(address.getZipcode(), equalTo(ZIPCODE));
     }
-    
+   
    @Test
-   @Order(4)
-   public void test_updateAddress_with_adminrole() {
+   @Order(5)
+   public void test05_addInvalidAddress_with_adminrole() throws JsonMappingException, JsonProcessingException {
+   		Address invalid = new Address();
+   		invalid.setAddress(null, STREETNUM, CITY, PROVINCE, COUNTRY, ZIPCODE);
+	   
+	   Entity<Address> addInvalid = Entity.json(invalid);
+   	
+   		Response response = webTarget
+            .register(adminAuth)
+            .path(CUSTOMER_ADDRESS_SUBRESOURCE_NAME)
+            .request()
+            .post(addInvalid);
+   		
+        assertThat(response.getStatus(), is(500));
+    }
+      
+   @Test
+   @Order(6)
+   public void test06_updateAddress_with_adminrole() throws JsonMappingException, JsonProcessingException {
 	   Response response = webTarget
 	            .register(adminAuth)
 	            .path(CUSTOMER_ADDRESS_SUBRESOURCE_NAME + "/" + sampleId)
@@ -189,16 +219,65 @@ public class TestAddress {
         assertThat(address.getZipcode(), equalTo(newZipcode));
     }
    
+   @Test
+   @Order(7)
+   public void test07_updateInvalidAddress_with_adminrole() throws JsonMappingException, JsonProcessingException {
+	   Response response = webTarget
+	            .register(adminAuth)
+	            .path(CUSTOMER_ADDRESS_SUBRESOURCE_NAME + "/" + sampleId)
+	            .request()
+	            .get();
+	   
+	    Address address = response.readEntity(new GenericType<Address>(){});
+	   
+	    String newStreetNum = "666";
+		String newStreet = null;
+		String newCity = "boston";
+		String newProvinve = "MA";
+		String newCountry = "US";
+		String newZipcode = "MAB789";
+		
+		address.setAddress(newStreetNum, newStreet, newCity, newProvinve, newCountry, newZipcode);
+		
+   		Entity<Address> update = Entity.json(address);
+   	
+   		response = webTarget
+            .register(adminAuth)
+            .path(CUSTOMER_ADDRESS_SUBRESOURCE_NAME + "/" + sampleId)
+            .request()
+            .put(update);
+   		
+        assertThat(response.getStatus(), is(500));
+    }
    
     @Test
-  	@Order(5)
-      public void test_deleteAddress_with_adminrole() {
-    	Response response = webTarget
+  	@Order(8)
+    public void test08_deleteAddress_with_adminrole() throws JsonMappingException, JsonProcessingException {
+    	  Response response = webTarget
+    	            .register(adminAuth)
+    	            .path(CUSTOMER_ADDRESS_SUBRESOURCE_NAME)
+    	            .request()
+    	            .get();
+	        assertThat(response.getStatus(), is(200));
+	        List<Address> addresses = response.readEntity(new GenericType<List<Address>>(){});
+	        assertThat(addresses, is(not(empty())));
+	        assertThat(addresses, hasSize(2));
+    	
+    	    response = webTarget
               .register(adminAuth)
               .path(CUSTOMER_ADDRESS_SUBRESOURCE_NAME + "/" + sampleId)
               .request()
               .delete();
-          assertThat(response.getStatus(), is(200));
           
+    	    assertThat(response.getStatus(), is(200));
+          
+            response = webTarget
+  	            .register(adminAuth)
+  	            .path(CUSTOMER_ADDRESS_SUBRESOURCE_NAME)
+  	            .request()
+  	            .get();
+          
+            addresses = response.readEntity(new GenericType<List<Address>>(){});
+	        assertThat(addresses, hasSize(1));
       }
 }
